@@ -13,4 +13,10 @@ result = run_analysis(df)
 
 # print(result["validation"])
 
-print(result["cleaning_report"])
+#print(result["segmentation"])
+#print(df["fico_range_low"].describe())
+#print(df["fico_range_low"].min())
+#print(df["fico_range_low"].max())
+#print(df["grade"].value_counts())
+
+print(result["insight"])
