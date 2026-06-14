@@ -11,4 +11,6 @@ df = load_file(
 
 result = run_analysis(df)
 
-print(result)
+# print(result["validation"])
+
+print(result["cleaning_report"])
