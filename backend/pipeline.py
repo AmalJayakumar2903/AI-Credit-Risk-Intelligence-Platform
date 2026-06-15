@@ -9,9 +9,15 @@ from backend.analytics.segmentation import (
     grade_distribution,
     purpose_distribution,
     state_distribution,
+    state_default_rate,
     grade_default_rate,
     purpose_default_rate,
     fico_default_rate
+)
+from backend.analytics.risk_drivers import (
+    top_risk_grade,
+    top_risk_purpose,
+    top_risk_state
 )
 
 def run_analysis(df):
@@ -35,6 +41,9 @@ def run_analysis(df):
         "state_distribution":
             state_distribution(df),
 
+        "state_default_rate":
+            state_default_rate(df),
+
         "grade_default_rate":
             grade_default_rate(df),
 
@@ -46,10 +55,29 @@ def run_analysis(df):
 
     }
 
+    risk_drivers = {
+
+        "top_grade":
+            top_risk_grade(
+                segmentation
+            ),
+
+        "top_purpose":
+            top_risk_purpose(
+                segmentation
+            ),
+
+        "top_state":
+            top_risk_state(
+                segmentation
+            )
+    }
+
     insight = generate_insight(
         portfolio,
         risk,
-        segmentation
+        segmentation,
+        risk_drivers
     )
 
     return {
@@ -60,5 +88,6 @@ def run_analysis(df):
         "segmentation": segmentation,
         "insight": insight,
         "validation": validation,
-        "cleaning_report": cleaning_report
+        "cleaning_report": cleaning_report,
+        "risk_drivers": risk_drivers
     }

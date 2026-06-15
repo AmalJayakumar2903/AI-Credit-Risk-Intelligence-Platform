@@ -70,3 +70,22 @@ def fico_default_rate(df):
         * 100
     )
     return defaults.round(2).to_dict()
+
+def state_default_rate(df):
+
+    state_defaults = (
+        df.assign(
+            default_flag=
+            (df["loan_status"] == "Charged Off")
+        )
+        .groupby("addr_state")
+        ["default_flag"]
+        .mean()
+        * 100
+    )
+
+    return (
+        state_defaults
+        .round(2)
+        .to_dict()
+    )

@@ -33,7 +33,8 @@ def find_risk_leader(rates, counts):
 def generate_insight(
     portfolio,
     risk,
-    segmentation
+    segmentation,
+    risk_drivers
 ):
 
     purpose_leader = find_risk_leader(
@@ -79,8 +80,7 @@ Current loan rate is {risk['current_rate']}%.
 
 Highest observed grade default rate:
 {grade_leader['raw_segment']}
-({grade_leader['raw_rate']}%)
-based on
+({grade_leader['raw_rate']}%) based on
 {grade_leader['raw_count']} loans.
 
 Applying a minimum threshold of
@@ -88,14 +88,12 @@ Applying a minimum threshold of
 
 highest material grade risk is
 {grade_leader['threshold_segment']}
-({grade_leader['threshold_rate']}%)
-across
+({grade_leader['threshold_rate']}%) across
 {grade_leader['threshold_count']} loans.
 
 Highest observed purpose default rate:
 {purpose_leader['raw_segment']}
-({purpose_leader['raw_rate']}%)
-based on
+({purpose_leader['raw_rate']}%) based on
 {purpose_leader['raw_count']} loans.
 
 Applying a minimum threshold of
@@ -108,9 +106,6 @@ across
 {purpose_leader['threshold_count']} loans.
 
 Largest state concentration is
-{largest_state}
-with
-{state_count}
-loans
+{largest_state} with {state_count} loans
 ({state_pct}% of portfolio).
 """
