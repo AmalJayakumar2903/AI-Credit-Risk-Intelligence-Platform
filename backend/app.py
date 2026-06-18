@@ -2,9 +2,11 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+
 @app.get("/")
-def root():
+def home():
+
     return {
         "status": "running",
-        "project": "CredRiskAnalyzer"
+        "application": "CredRiskAnalyzer"
     }
