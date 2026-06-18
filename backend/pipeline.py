@@ -19,6 +19,9 @@ from backend.analytics.risk_drivers import (
     top_risk_purpose,
     top_risk_state
 )
+from backend.analytics.recommendations import (
+    generate_recommendations
+)
 
 def run_analysis(df):
 
@@ -73,6 +76,12 @@ def run_analysis(df):
             )
     }
 
+    recommendations = generate_recommendations(
+        risk,
+        risk_drivers
+    )
+    
+
     insight = generate_insight(
         portfolio,
         risk,
@@ -89,5 +98,6 @@ def run_analysis(df):
         "insight": insight,
         "validation": validation,
         "cleaning_report": cleaning_report,
-        "risk_drivers": risk_drivers
+        "risk_drivers": risk_drivers,
+        "recommendations": recommendations
     }
