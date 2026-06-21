@@ -19,4 +19,4 @@ result = run_analysis(df)
 #print(df["fico_range_low"].max())
 #print(df["grade"].value_counts())
 
-print(result["recommendations"])
+print(result["classification"])

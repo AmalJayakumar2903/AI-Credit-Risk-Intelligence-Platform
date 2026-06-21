@@ -22,14 +22,17 @@ from backend.analytics.risk_drivers import (
 from backend.analytics.recommendations import (
     generate_recommendations
 )
+from backend.ingestion.dataset_classifier import (
+    classify_dataset
+)
 
 def run_analysis(df):
 
     df, cleaning_report = clean_dataset(df)
+    classification = classify_dataset(df)
     profile = profile_dataset(df)
     data_dictionary = generate_data_dictionary(df)
     validation = validate_credit_dataset(df)
-
     portfolio = portfolio_summary(df)
 
     risk = risk_summary(df)
@@ -92,6 +95,7 @@ def run_analysis(df):
     return {
         "profile": profile,
         "data_dictionary": data_dictionary,
+        "classification": classification,
         "portfolio": portfolio,
         "risk": risk,
         "segmentation": segmentation,

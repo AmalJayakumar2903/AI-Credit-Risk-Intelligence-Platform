@@ -93,6 +93,9 @@ async def profile_file(
 
     return {
 
+        "classification":
+            result["classification"],
+
         "profile":
             result["profile"],
 
