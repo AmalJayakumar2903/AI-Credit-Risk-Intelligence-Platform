@@ -25,11 +25,15 @@ from backend.analytics.recommendations import (
 from backend.ingestion.dataset_classifier import (
     classify_dataset
 )
+from backend.ingestion.schema_normalizer import (
+    normalize_schema
+)
 
 def run_analysis(df):
 
     df, cleaning_report = clean_dataset(df)
     classification = classify_dataset(df)
+    df = normalize_schema(df, classification["schema_mapping"])
     profile = profile_dataset(df)
     data_dictionary = generate_data_dictionary(df)
     validation = validate_credit_dataset(df)
