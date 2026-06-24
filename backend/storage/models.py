@@ -9,6 +9,7 @@ from sqlalchemy import (
 )
 
 from datetime import datetime
+from datetime import UTC
 
 
 class Base(DeclarativeBase):
@@ -50,5 +51,5 @@ class AnalysisRun(Base):
 
     created_at = Column(
         DateTime,
-        default=datetime.utcnow
+        default=lambda: datetime.now(UTC)
     )
