@@ -1,10 +1,5 @@
-from backend.storage.postgres import (
-    SessionLocal
-)
-
-from backend.storage.models import (
-    AnalysisRun
-)
+from backend.storage.postgres import SessionLocal
+from backend.storage.models import AnalysisRun
 
 
 def save_analysis_run(data):
@@ -29,6 +24,44 @@ def save_analysis_run(data):
         db.refresh(run)
 
         return run.id
+
+    finally:
+
+        db.close()
+
+
+def get_all_analysis_runs():
+
+    db = SessionLocal()
+
+    try:
+
+        return (
+            db.query(AnalysisRun)
+            .order_by(
+                AnalysisRun.created_at.desc()
+            )
+            .all()
+        )
+
+    finally:
+
+        db.close()
+
+
+def get_analysis_run(run_id):
+
+    db = SessionLocal()
+
+    try:
+
+        return (
+            db.query(AnalysisRun)
+            .filter(
+                AnalysisRun.id == run_id
+            )
+            .first()
+        )
 
     finally:
 
