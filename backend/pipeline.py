@@ -34,6 +34,7 @@ def run_analysis(df):
     df, cleaning_report = clean_dataset(df)
     classification = classify_dataset(df)
     df = normalize_schema(df, classification["schema_mapping"])
+    # print(df.columns.tolist())
     profile = profile_dataset(df)
     data_dictionary = generate_data_dictionary(df)
     validation = validate_credit_dataset(df)

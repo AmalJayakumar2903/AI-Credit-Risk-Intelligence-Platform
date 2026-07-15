@@ -3,10 +3,9 @@ COLUMN_ALIASES = {
     "loan_amount": [
         "loan_amnt",
         "loan_amount",
-        "loan_amt",
-        "funded_amount",
         "funded_amnt",
         "funded_amnt_inv",
+        "funded_amount",
         "origination_amount",
         "principal_amount",
         "loan_balance"
@@ -43,6 +42,7 @@ COLUMN_ALIASES = {
     "income": [
         "annual_inc",
         "annual_income",
+        "income",
         "borrower_income",
         "monthly_income"
     ],

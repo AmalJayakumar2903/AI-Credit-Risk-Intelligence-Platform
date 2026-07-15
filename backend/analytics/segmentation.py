@@ -16,7 +16,7 @@ def purpose_distribution(df):
 
 def state_distribution(df):
     return (
-        df["addr_state"]
+        df["state"]
         .value_counts()
         .head(10)
         .to_dict()
@@ -48,7 +48,7 @@ def purpose_default_rate(df):
 
 def fico_default_rate(df):
     fico_band = pd.cut(
-        df["fico_range_low"],
+        df["credit_score"],
         bins=[300, 580, 670, 740, 800, 900],
         labels=[
             "Poor",
@@ -78,7 +78,7 @@ def state_default_rate(df):
             default_flag=
             (df["loan_status"] == "Charged Off")
         )
-        .groupby("addr_state")
+        .groupby("state")
         ["default_flag"]
         .mean()
         * 100

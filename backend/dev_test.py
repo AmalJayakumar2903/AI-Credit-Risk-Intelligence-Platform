@@ -14,9 +14,9 @@ result = run_analysis(df)
 # print(result["validation"])
 
 #print(result["segmentation"])
-#print(df["fico_range_low"].describe())
-#print(df["fico_range_low"].min())
-#print(df["fico_range_low"].max())
+#print(df["credit_score"].describe())
+#print(df["credit_score"].min())
+#print(df["credit_score"].max())
 #print(df["grade"].value_counts())
 
 print(result["classification"])
