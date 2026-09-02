@@ -36,7 +36,7 @@ def get_all_analysis_runs():
 
     try:
 
-        return (
+        runs = (
             db.query(AnalysisRun)
             .order_by(
                 AnalysisRun.created_at.desc()
@@ -44,24 +44,57 @@ def get_all_analysis_runs():
             .all()
         )
 
+        return runs
+
     finally:
 
         db.close()
 
 
-def get_analysis_run(run_id):
+def get_analysis_by_id(analysis_id):
 
     db = SessionLocal()
 
     try:
 
-        return (
+        run = (
             db.query(AnalysisRun)
             .filter(
-                AnalysisRun.id == run_id
+                AnalysisRun.id == analysis_id
             )
             .first()
         )
+
+        return run
+
+    finally:
+
+        db.close()
+
+
+def compare_runs(id1, id2):
+
+    db = SessionLocal()
+
+    try:
+
+        run1 = (
+            db.query(AnalysisRun)
+            .filter(
+                AnalysisRun.id == id1
+            )
+            .first()
+        )
+
+        run2 = (
+            db.query(AnalysisRun)
+            .filter(
+                AnalysisRun.id == id2
+            )
+            .first()
+        )
+
+        return run1, run2
 
     finally:
 
