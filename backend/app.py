@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi import UploadFile
 from fastapi import File
 
+from pydantic import BaseModel
+
 import shutil
 
 from backend.ingestion.excel_loader import load_file
@@ -22,9 +24,27 @@ from backend.ai.risk_explainer import (
     generate_risk_explanation
 )
 
+from backend.ai.rag import (
+    answer_document_question
+)
+
+from backend.ai.dataset_qa import (
+    answer_dataset_question
+)
+
 
 app = FastAPI()
 
+
+class DocumentQuestion(BaseModel):
+
+    query: str
+
+
+class DatasetQuestion(BaseModel):
+
+    analysis_id: int
+    query: str
 
 @app.get("/")
 def home():
@@ -60,18 +80,6 @@ async def analyze_file(
     )
 
     result = run_analysis(df)
-
-    ai_explanation = generate_risk_explanation(
-
-        result["portfolio"],
-
-        result["risk"],
-
-        result["risk_drivers"],
-
-        result["recommendations"]
-
-    )
 
     analysis_id = save_analysis_run({
 
@@ -113,10 +121,7 @@ async def analyze_file(
             result["recommendations"],
 
         "insight":
-            result["insight"],
-
-        "ai_explanation":
-            ai_explanation
+            result["insight"]
 
     }
 
@@ -216,10 +221,8 @@ def history_record(
     if not run:
 
         return {
-
             "error":
                 "Analysis not found"
-
         }
 
     return {
@@ -265,10 +268,8 @@ def compare(
     if not run1 or not run2:
 
         return {
-
             "error":
                 "One or both analysis IDs not found"
-
         }
 
     return {
@@ -316,7 +317,8 @@ def compare(
                 ),
 
             "risk_grade_change":
-                f"{run1.top_risk_grade} -> {run2.top_risk_grade}"
+                f"{run1.top_risk_grade} -> "
+                f"{run2.top_risk_grade}"
 
         }
 
@@ -345,3 +347,27 @@ async def ai_test():
             response
 
     }
+
+
+@app.post("/ai/document")
+async def ai_document(
+    question: DocumentQuestion
+):
+
+    result = answer_document_question(
+        question.query
+    )
+
+    return result
+
+@app.post("/ai/dataset")
+async def ai_dataset(
+    question: DatasetQuestion
+):
+
+    result = answer_dataset_question(
+        question.analysis_id,
+        question.query
+    )
+
+    return result
