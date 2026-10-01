@@ -37,9 +37,11 @@ app = FastAPI()
 
 
 class DocumentQuestion(BaseModel):
-
     query: str
 
+class AIQuestion(BaseModel):
+    query: str
+    analysis_context: dict
 
 class DatasetQuestion(BaseModel):
 
@@ -359,6 +361,41 @@ async def ai_document(
     )
 
     return result
+
+@app.post("/ai/ask")
+async def ai_ask(
+    question: AIQuestion
+):
+    prompt = f"""
+You are an AI credit risk analyst.
+
+The user has already run a credit portfolio analysis.
+
+Use ONLY the analysis results provided below to answer
+the user's question.
+
+Do not invent metrics or facts that are not present
+in the analysis context.
+
+If the available context is insufficient to answer,
+clearly say that the available analysis does not contain
+enough information.
+
+Analysis results:
+{question.analysis_context}
+
+User question:
+{question.query}
+
+Give a concise, professional answer.
+"""
+
+    response = generate_response(prompt)
+
+    return {
+        "query": question.query,
+        "answer": response
+    }
 
 @app.post("/ai/dataset")
 async def ai_dataset(

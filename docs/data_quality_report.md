@@ -6,7 +6,7 @@ Rows Analyzed: 2000
 
 member_id 100.0
 desc 99.95
-annual_inc_joint 99.5
+income_joint 99.5
 dti_joint 99.5
 verification_status_joint 99.5
 revol_bal_joint 100.0
@@ -50,14 +50,14 @@ loan_amnt 0.0
 funded_amnt 0.0
 funded_amnt_inv 0.0
 term 0.0
-int_rate 0.0
+interest_rate 0.0
 installment 0.0
 grade 0.0
 sub_grade 0.0
 emp_title 4.5
 emp_length 4.45
 home_ownership 0.0
-annual_inc 0.0
+income 0.0
 verification_status 0.0
 issue_d 0.0
 loan_status 0.0
@@ -66,7 +66,7 @@ url 0.0
 purpose 0.0
 title 2.55
 zip_code 0.0
-addr_state 0.0
+state 0.0
 dti 0.0
 delinq_2yrs 0.0
 earliest_cr_line 0.0

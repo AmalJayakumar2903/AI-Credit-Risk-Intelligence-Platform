@@ -5,10 +5,10 @@ REQUIRED_CREDIT_COLUMNS = [
 
 
 RECOMMENDED_COLUMNS = [
-    "int_rate",
-    "annual_inc",
+    "interest_rate",
+    "income",
     "grade",
-    "fico_range_low"
+    "credit_score"
 ]
 
 
