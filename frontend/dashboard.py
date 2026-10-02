@@ -12,6 +12,21 @@ st.set_page_config(
 )
 
 
+# ---------------------------------------------------------
+# Session state
+# ---------------------------------------------------------
+
+if "analysis" not in st.session_state:
+    st.session_state.analysis = None
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+
+# ---------------------------------------------------------
+# Page
+# ---------------------------------------------------------
+
 st.title("Credit Risk Analytics Platform")
 
 st.caption(
@@ -21,10 +36,10 @@ st.caption(
 
 
 # ---------------------------------------------------------
-# Upload
+# Dataset upload
 # ---------------------------------------------------------
 
-st.subheader("Dataset Analysis")
+st.header("Dataset Analysis")
 
 uploaded_file = st.file_uploader(
     "Upload Dataset",
@@ -67,8 +82,11 @@ if uploaded_file:
 
                 result = response.json()
 
-                # Store latest analysis
-                st.session_state["analysis"] = result
+                # Persist analysis across Streamlit reruns
+                st.session_state.analysis = result
+
+                # Clear previous AI conversation
+                st.session_state.chat_history = []
 
                 st.success(
                     "Analysis completed successfully."
@@ -77,8 +95,7 @@ if uploaded_file:
             except requests.exceptions.ConnectionError:
 
                 st.error(
-                    "Could not connect to the FastAPI backend. "
-                    "Make sure FastAPI is running on port 8000."
+                    "Could not connect to the FastAPI backend."
                 )
 
             except requests.exceptions.RequestException as error:
@@ -92,9 +109,9 @@ if uploaded_file:
 # Display analysis
 # ---------------------------------------------------------
 
-if "analysis" in st.session_state:
+if st.session_state.analysis:
 
-    result = st.session_state["analysis"]
+    result = st.session_state.analysis
 
     st.divider()
 
@@ -130,7 +147,7 @@ if "analysis" in st.session_state:
 
 
     # -----------------------------------------------------
-    # Risk
+    # Risk metrics
     # -----------------------------------------------------
 
     st.header("Risk Metrics")
@@ -166,111 +183,6 @@ if "analysis" in st.session_state:
                     label,
                     str(value)
                 )
-
-
-    # -----------------------------------------------------
-    # Segmentation
-    # -----------------------------------------------------
-
-    st.header("Risk Segmentation")
-
-    segmentation = result.get(
-        "segmentation",
-        {}
-    )
-
-    tab1, tab2, tab3, tab4 = st.tabs(
-        [
-            "Grade",
-            "Purpose",
-            "State",
-            "Credit Score"
-        ]
-    )
-
-
-    with tab1:
-
-        grade_data = segmentation.get(
-            "grade_default_rate",
-            {}
-        )
-
-        if grade_data:
-
-            st.dataframe(
-                grade_data,
-                use_container_width=True
-            )
-
-        else:
-
-            st.info(
-                "No grade-level risk data available."
-            )
-
-
-    with tab2:
-
-        purpose_data = segmentation.get(
-            "purpose_default_rate",
-            {}
-        )
-
-        if purpose_data:
-
-            st.dataframe(
-                purpose_data,
-                use_container_width=True
-            )
-
-        else:
-
-            st.info(
-                "No purpose-level risk data available."
-            )
-
-
-    with tab3:
-
-        state_data = segmentation.get(
-            "state_default_rate",
-            {}
-        )
-
-        if state_data:
-
-            st.dataframe(
-                state_data,
-                use_container_width=True
-            )
-
-        else:
-
-            st.info(
-                "No state-level risk data available."
-            )
-
-
-    with tab4:
-
-        fico_data = segmentation.get(
-            "fico_default_rate",
-            {}
-        )
-
-        if fico_data:
-
-            st.dataframe(
-                fico_data,
-                use_container_width=True
-            )
-
-        else:
-
-            st.info(
-                "No credit-score risk data available."
-            )
 
 
     # -----------------------------------------------------
@@ -313,32 +225,60 @@ if "analysis" in st.session_state:
     )
 
     if insight:
-
-        st.write(
-            insight
-        )
+        st.write(insight)
 
 
-    # -----------------------------------------------------
-    # AI Analyst
-    # -----------------------------------------------------
+# ---------------------------------------------------------
+# AI Risk Analyst
+# ---------------------------------------------------------
 
-    st.divider()
+st.divider()
 
-    st.header("🤖 AI Risk Analyst")
+st.header("🤖 AI Risk Analyst")
+
+if not st.session_state.analysis:
+
+    st.info(
+        "Run a dataset analysis first to enable the AI Risk Analyst."
+    )
+
+else:
 
     st.caption(
         "Ask questions about the latest portfolio analysis."
     )
 
+    # Display previous conversation
+    for message in st.session_state.chat_history:
+
+        with st.chat_message(
+            message["role"]
+        ):
+
+            st.write(
+                message["content"]
+            )
+
+
+    # Persistent chat input
     user_query = st.chat_input(
-        "Ask something about this portfolio..."
+        "Ask about this portfolio..."
     )
+
 
     if user_query:
 
+        # Store user message
+        st.session_state.chat_history.append(
+            {
+                "role": "user",
+                "content": user_query
+            }
+        )
+
         with st.chat_message("user"):
             st.write(user_query)
+
 
         with st.chat_message("assistant"):
 
@@ -348,25 +288,43 @@ if "analysis" in st.session_state:
 
                 try:
 
-                    ai_response = requests.post(
+                    response = requests.post(
                         f"{API_URL}/ai/ask",
                         json={
                             "query": user_query,
-                            "analysis_context": result
+                            "analysis_context":
+                                st.session_state.analysis
                         },
                         timeout=120
                     )
 
-                    ai_response.raise_for_status()
+                    response.raise_for_status()
 
-                    answer = ai_response.json()
+                    answer = response.json()["answer"]
 
-                    st.write(
-                        answer["answer"]
+                    st.write(answer)
+
+                    # Store AI response
+                    st.session_state.chat_history.append(
+                        {
+                            "role": "assistant",
+                            "content": answer
+                        }
                     )
 
                 except requests.exceptions.RequestException as error:
 
-                    st.error(
+                    error_message = (
                         f"AI request failed: {error}"
+                    )
+
+                    st.error(
+                        error_message
+                    )
+
+                    st.session_state.chat_history.append(
+                        {
+                            "role": "assistant",
+                            "content": error_message
+                        }
                     )
